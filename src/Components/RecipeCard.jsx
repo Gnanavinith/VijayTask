@@ -1,16 +1,16 @@
-// components/RecipeCard.jsx
-import React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { addFavorite, removeFavorite } from '../features/favoritesSlice';
+import React from "react";
+import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { addFavorite, removeFavorite } from "../features/favoritesSlice";
 
-// eslint-disable-next-line react/prop-types
 const RecipeCard = ({ recipe }) => {
   const dispatch = useDispatch();
   const favorites = useSelector((state) => state.favorites);
-  // eslint-disable-next-line react/prop-types
+
   const isFavorite = favorites.some((fav) => fav.uri === recipe.uri);
 
-  const handleFavorite = () => {
+  const handleFavorite = (e) => {
+    e.preventDefault(); // Prevents navigating when clicking the button
     if (isFavorite) {
       dispatch(removeFavorite(recipe));
     } else {
@@ -19,21 +19,46 @@ const RecipeCard = ({ recipe }) => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden">
-      <img src={recipe.image} alt={recipe.label} className="w-full h-48 object-cover" />
-      <div className="p-4">
-        <h2 className="text-xl font-bold mb-2">{recipe.label}</h2>
-        <p className="text-gray-600">{recipe.source}</p>
-        <button
-          onClick={handleFavorite}
-          className={`mt-2 px-4 py-2 rounded-lg ${
-            isFavorite ? 'bg-red-500' : 'bg-blue-500'
-          } text-white`}
-        >
-          {isFavorite ? 'Remove Favorite' : 'Add Favorite'}
-        </button>
+    <Link
+      to={`/recipe/${encodeURIComponent(recipe.uri)}`}
+      className="relative max-w-sm w-full bg-white rounded-2xl shadow-lg overflow-hidden transition-all duration-300 transform hover:scale-105 hover:shadow-2xl mt-10"
+    >
+      {/* Recipe Image */}
+      <img
+        src={recipe.image}
+        alt={recipe.label}
+        className="w-full h-56 object-cover rounded-t-2xl"
+      />
+
+      {/* Favorite Button */}
+      <button
+        onClick={handleFavorite}
+        className={`absolute top-4 right-4 px-2 py-1 text-sm rounded-full text-gray-50 transition-all duration-300 ${
+          isFavorite ? "bg-red-500 hover:bg-red-600" : "bg-blue-600 hover:bg-blue"
+        } shadow-md focus:outline-none`}
+      >
+        {isFavorite ? "❤️ Favorited" : "💙 Add to Favorites"}
+      </button>
+
+      {/* Recipe Details */}
+      <div className="p-4 bg-white/60 backdrop-blur-lg rounded-b-2xl">
+        <h2 className="text-xl font-semibold text-gray-800">{recipe.label}</h2>
+
+        {/* Short Description - Show 3 Ingredients */}
+        <div className="bg-blue-50 p-4 rounded-lg shadow-2xl mt-3">
+          <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+            🍴 Quick Recipe Preview:
+          </h3>
+          <ul className="mt-2 space-y-1 text-gray-700">
+            {recipe.ingredientLines.slice(0, 3).map((ingredient, index) => (
+              <li key={index} className="flex items-center gap-2">
+                ✅ {ingredient}
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
-    </div>
+    </Link>
   );
 };
 
