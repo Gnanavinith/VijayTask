@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchRecipes } from "../features/recipesSlice";
-import RecipeCard from "../components/RecipeCard";
+import RecipeCard from "../Components/RecipeCard";
 import "ldrs/tailChase"; // Import TailChase Loader
 
 const Home = () => {
